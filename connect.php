@@ -11,5 +11,3 @@ if($con->connect_error){
 }
 
 
-
-?>

@@ -7,7 +7,7 @@
 }
 
 // Retrieve user information from session
-$username = $_SESSION['username'];
+$username1 = $_SESSION['username'];
 $email = $_SESSION['email'];
 $designation=$_SESSION['designation'];
 $image=$_SESSION['image'];
@@ -48,20 +48,23 @@ $result = $con->query($sql);
         .separator{
             background-color: #ffffff;
         }
+        button{
+            margin-left: 1em;
+        }
         
     </style>
 </head>
-<body>
-    <div class="container-fluid " >
+<body style="background-color:#eeeeee;">
+    <div class="container" >
         <div class="row justify-content-center">
-            <div class="col-md-2 bg-color text-center position-fixed" style="z-index: 1000; left: 0;">
+            <div class="col-md-2 bg-color text-center position-fixed" style="z-index: 900; left: 0;">
                   <p class="my-4">User Profile</p>
                   <hr class="separator">
                   <div class="profile-image-container text-center">
                     <img src="images/<?php echo $image; ?>" alt="" class="rounded-circle" style="width: 100px; height: 100px; background-color: antiquewhite;"> 
                 </div>
                 <hr class="separator">
-                <p><?php echo $username; ?></p>
+                <p><?php echo $username1; ?></p>
                 
                 <p><?php echo $designation; ?></p>
                 
@@ -70,11 +73,11 @@ $result = $con->query($sql);
                
 
             </div>
-            <div class="container col-md-9  " style="z-index: 1000; left: 100px;">
+            <div class="col-md-9" style="z-index: 1000; left: 100px;">
              
              <div class="card">
-             <p class="mt-4 text-center text-success">Sales Data</p>
-             <table class="table table-stripped">
+             <h2 class="text-center text-white bg-primary">Sales Data</h2>
+             <table class="table table-stripped center">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -82,16 +85,16 @@ $result = $con->query($sql);
                         <th>Quantity</th>
                         <th>Price</th>
                         <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                 <?php
-                $id=1;
+                
                 if ($result->num_rows > 0) {
-                        while($row = $result->fetch_assoc()) {
-                            echo "<tr><td>" . $id. "</td><td>" . $row["item"]. "</td><td>" . $row["qty"]. "</td><td>" . $row["price"]. "</td><td>" . $row["status"]. "</td></tr>";
-                            $id++;
-                        }
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr><td>" . $row["id"] . "</td><td>" . $row["item"] . "</td><td>" . $row["qty"] . "</td><td>" . $row["price"] . "</td><td>" . $row["status"] . "</td><td><a class='btn btn-primary' href='edit.php?id=".$row['id']."'>Edit</a><button class='btn btn-danger' onclick='deleteItem(" . $row['id'] . ")'>Delete</button></td></tr>";
+                    }
                     } else {
                         echo "<tr><td colspan='5'>No data found</td></tr>";
                     }
@@ -131,5 +134,22 @@ $result = $con->query($sql);
             </div>
         </div>
     </div>
+    <script>
+        function deleteItem(itemId) {
+    // Send an AJAX request to the server to delete the item with the given ID
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "delete_item.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // Handle response from the server
+            // For example, you could reload the page to reflect the updated data
+            location.reload();
+        }
+    };
+    xhr.send("id=" + itemId);
+}
+
+    </script>
 </body>
 </html>
